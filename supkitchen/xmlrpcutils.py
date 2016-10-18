@@ -1,25 +1,28 @@
 import xmlrpclib
 import logging
+import sys
 
 class SupervisorRPC(object):
-    def __init__(self, host, port=80, user=None, password=None):
+    def __init__(self, host, user=None, password=None):
         self.host = host
-        self.port = port
         self.user = user
         self.password = password
 
         if self.user is not None:
-            self.server = xmlrpclib.Server('http://{0}:{1}@{2}:{3}/RPC2'.format(self.user,
-                                                                                self.password,
-                                                                                self.host,
-                                                                                self.port))
+            serverstring='http://{0}:{1}@{2}/RPC2'.format(self.user, self.password, self.host)
         else:
-            self.server = xmlrpclib.Server('http://{0}:{1}/RPC2'.format(self.host,
-                                                                        self.port))
+            serverstring='http://{0}/RPC2'.format(self.host)
+
+        self.server = xmlrpclib.Server(serverstring)
 
     def getServerStatus(self):
-        return self.server.supervisor.getState()
+        try:
+            status = self.server.supervisor.getState()
+        except:
+            logging.critical(sys.exc_info()[0])
+            logging.critical(sys.exc_info()[1])
 
+        return status
 
     def getAllProcesses(self):
         return self.server.supervisor.getAllProcessInfo()

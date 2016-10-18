@@ -5,7 +5,7 @@
 <pre>Selected Server: {{ $ctrl.servers.list[ $ctrl.servers.selectedindex ] }} Status:{{ $ctrl.servers.status.statename }}</pre>
 <div>
     <div  class="btn-group" role="group">
-       <button ng-repeat="process in $ctrl.servers.processlist" type="button" class="btn btn-success btn-sm"
+       <button ng-repeat="process in $ctrl.servers.processlist" type="button" ng-class="$ctrl.buttonclass(process.state)"
         ng-click="$ctrl.taillog($index)">{{process.name}}</button>
     </div>
     <pre>Name: {{ $ctrl.curprocess.name }} Status: {{ $ctrl.curprocess.statename }} Info: {{ $ctrl.curprocess.description }}</pre>

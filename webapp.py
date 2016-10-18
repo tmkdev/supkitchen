@@ -14,12 +14,13 @@ def hello_world():
 
 @app.route('/api/servers')
 def getservers():
-    servers = json.dumps(config.sections())
+    servers = jsonify(config.sections())
 
     return servers
 
-@app.route('/api/serverstatus/<string:servername>')
+@app.route('/api/serverstatus/<servername>')
 def getserverstatus(servername):
+    serverstatus = {}
     try:
         srpc = SupervisorRPC(**dict(config.items(servername)))
         serverstatus = srpc.getServerStatus()

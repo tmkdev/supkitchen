@@ -10,6 +10,28 @@ function SupKitchenServersController($http) {
         ctrl.onUpdate({ index: index});
     }
 
+    ctrl.buttonclass = function(status) {
+        var basebutton='btn btn-sm'
+
+        if ( status == 0)
+            return basebutton + ' btn-danger';
+        else if ( status == 10 )
+            return basebutton + ' btn-info';
+        else if ( status == 20 )
+            return basebutton + ' btn-success';
+        else if ( status == 30 )
+            return basebutton + ' btn-warning';
+        else if ( status == 40 )
+            return basebutton + ' btn-danger';
+        else if ( status == 100 )
+            return basebutton + ' btn-warning';
+        else if ( status == 200 )
+            return basebutton + ' btn-danger';
+        else
+            return basebutton;
+
+    };
+
     ctrl.taillog = function(index) {
         ctrl.processindex = index;
         ctrl.curprocess = ctrl.servers.processlist[ctrl.processindex];
