@@ -14,7 +14,7 @@ def hello_world():
 
 @app.route('/api/servers')
 def getservers():
-    servers=json.dumps(config.sections())
+    servers = json.dumps(config.sections())
 
     return servers
 

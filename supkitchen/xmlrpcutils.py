@@ -14,10 +14,8 @@ class SupervisorRPC(object):
                                                                                 self.host,
                                                                                 self.port))
         else:
-            self.server = xmlrpclib.Server('http://{0}:{1}@{2}:{3}/RPC2'.format(self.user,
-                                                                                self.password,
-                                                                                self.host,
-                                                                                self.port))
+            self.server = xmlrpclib.Server('http://{0}:{1}/RPC2'.format(self.host,
+                                                                        self.port))
 
     def getServerStatus(self):
         return self.server.supervisor.getState()
@@ -29,5 +27,5 @@ class SupervisorRPC(object):
     def getProcessInfo(self, processname):
         return self.server.supervisor.getProcessInfo(processname)
 
-    def tailLog(self, processname, length=8096):
+    def tailLog(self, processname, length=4096):
         return self.server.supervisor.tailProcessStdoutLog(processname, 0, length)

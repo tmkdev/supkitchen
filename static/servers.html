@@ -1,0 +1,13 @@
+<div class="btn-group" role="group">
+    <button ng-repeat="server in $ctrl.servers.list" ng-click="$ctrl.update($index)"
+            type="button" class="btn btn-primary btn-sm">{{server}}</button>
+</div>
+<pre>Selected Server: {{ $ctrl.servers.list[ $ctrl.servers.selectedindex ] }} Status:{{ $ctrl.servers.status.statename }}</pre>
+<div>
+    <div  class="btn-group" role="group">
+       <button ng-repeat="process in $ctrl.servers.processlist" type="button" class="btn btn-success btn-sm"
+        ng-click="$ctrl.taillog($index)">{{process.name}}</button>
+    </div>
+    <pre>Name: {{ $ctrl.curprocess.name }} Status: {{ $ctrl.curprocess.statename }} Info: {{ $ctrl.curprocess.description }}</pre>
+    <pre>{{ $ctrl.tail }}</pre>
+</div>
