@@ -16,7 +16,7 @@
 
 </div>
 <div class="container">
-    <div class="btn-group">
+    <div class="form-group btn-group">
         <button ng-repeat="process in $ctrl.servers.processlist" type="button"
                 ng-class="$ctrl.buttonclass(process.state)"
                 ng-click="$ctrl.taillog($index)">{{process.name}}
