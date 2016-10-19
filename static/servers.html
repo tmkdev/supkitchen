@@ -1,13 +1,34 @@
-<div class="btn-group" role="group">
-    <button ng-repeat="server in $ctrl.servers.list" ng-click="$ctrl.update($index)"
-            type="button" class="btn btn-primary btn-sm">{{server}}</button>
-</div>
-<pre>Selected Server: {{ $ctrl.servers.list[ $ctrl.servers.selectedindex ] }} Status:{{ $ctrl.servers.status.statename }}</pre>
-<div>
-    <div  class="btn-group" role="group">
-       <button ng-repeat="process in $ctrl.servers.processlist" type="button" ng-class="$ctrl.buttonclass(process.state)"
-        ng-click="$ctrl.taillog($index)">{{process.name}}</button>
+<div class="container">
+
+    <div class="navbar navbar-inverse">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <b>Sup(ervisor) Kitchen</b>
+            </a>
+        </div>
+        <div class="navbar-nav">
+            <button ng-repeat="server in $ctrl.servers.list" ng-click="$ctrl.update($index)"
+                    type="button" class="btn btn-primary btn-sm navbar-btn">{{server}}
+            </button>
+        </div>
     </div>
-    <pre>Name: {{ $ctrl.curprocess.name }} Status: {{ $ctrl.curprocess.statename }} Info: {{ $ctrl.curprocess.description }}</pre>
+
+
+</div>
+<div class="container">
+    <div class="btn-group">
+        <button ng-repeat="process in $ctrl.servers.processlist" type="button"
+                ng-class="$ctrl.buttonclass(process.state)"
+                ng-click="$ctrl.taillog($index)">{{process.name}}
+        </button>
+    </div>
+     <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="$ctrl.checked"> AutoUpdate
+    </label>
+  </div>
+    <pre>Selected Server:<span class="badge">{{ $ctrl.servers.list[ $ctrl.servers.selectedindex ] }}</span>  Server Status:<span class="badge">{{ $ctrl.servers.status.statename }}</span>
+Process Name: <span class="label label-info">{{ $ctrl.curprocess.name }}</span>  Status:<span class="label label-info">{{ $ctrl.curprocess.statename }}</span>
+Info:<span class="label label-default">{{ $ctrl.curprocess.description }}</span></pre>
     <pre>{{ $ctrl.tail }}</pre>
 </div>

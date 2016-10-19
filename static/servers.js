@@ -1,10 +1,11 @@
 (function(angular) {
   'use strict';
-function SupKitchenServersController($http) {
+function SupKitchenServersController($http, $interval) {
     var ctrl = this;
 
     ctrl.processindex = 0;
     ctrl.curprocess = {};
+    ctrl.checked = true;
 
     ctrl.update = function(index) {
         ctrl.onUpdate({ index: index});
@@ -42,7 +43,14 @@ function SupKitchenServersController($http) {
         });
     }
 
-    ctrl.tail = 'Waiting for selection....'
+    ctrl.tail = 'Waiting for selection....';
+
+    var updatetail = function() {
+        if (ctrl.checked)
+            ctrl.taillog(ctrl.processindex);
+    };
+
+    var stoptime = $interval(updatetail, 10000);
 
 }
 
