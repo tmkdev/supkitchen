@@ -46,7 +46,7 @@ def getprocessinfo(servername, processname):
 @app.route('/api/tailprocess/<string:servername>/<string:processname>')
 def taillog(servername, processname):
     srpc = SupervisorRPC(**dict(config.items(servername)))
-    tail = srpc.tailLog(processname)
+    tail = srpc.tailLog(processname, length=2048)
 
     return jsonify(tail)
 
