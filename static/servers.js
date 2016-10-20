@@ -6,31 +6,62 @@ function SupKitchenServersController($http, $interval) {
     ctrl.processindex = 0;
     ctrl.curprocess = {};
     ctrl.checked = true;
+    ctrl.tail = 'Waiting for selection....';
 
-    ctrl.update = function(index) {
-        ctrl.onUpdate({ index: index});
+    ctrl.servers = {
+        list: [],
+        selectedindex: null,
+        status: {},
+        processlist: []
+    };
+
+    $http.get('api/servers', {}).then(function(response){
+        ctrl.servers.list = response.data;
+        ctrl.servers.selectedindex = 0;
+
+        ctrl.updateServerStatus();
+    });
+
+    ctrl.updateServer = function( index ) {
+        ctrl.servers.selectedindex = index;
+        ctrl.updateServerStatus();
     }
 
-    ctrl.buttonclass = function(status) {
-        var basebutton='btn btn-sm'
+      ctrl.updateServerStatus = function() {
+        $http.get('api/serverstatus/' + ctrl.servers.list[ctrl.servers.selectedindex], {})
+         .then(function(response){
+          ctrl.servers.status = response.data;
 
+          ctrl.updateProcessList();
+        });
+      };
+
+      ctrl.updateProcessList = function() {
+        $http.get('api/serverprocesses/' + ctrl.servers.list[ctrl.servers.selectedindex], {})
+         .then(function(response){
+          ctrl.servers.processlist = response.data;
+        });
+      };
+
+    ctrl.processclass = function(style, status) {
         if ( status == 0)
-            return basebutton + ' btn-danger';
+            return style + 'danger';
+        else if ( status == 1 )
+            return style + 'success';
         else if ( status == 10 )
-            return basebutton + ' btn-info';
+            return style + 'info';
         else if ( status == 20 )
-            return basebutton + ' btn-success';
+            return style + 'success';
         else if ( status == 30 )
-            return basebutton + ' btn-warning';
+            return style + 'warning';
         else if ( status == 40 )
-            return basebutton + ' btn-danger';
+            return style + 'danger';
         else if ( status == 100 )
-            return basebutton + ' btn-warning';
+            return style + 'warning';
         else if ( status == 200 )
-            return basebutton + ' btn-danger';
+            return style + 'danger';
         else
-            return basebutton;
-
+            return style;
     };
 
     ctrl.taillog = function(index) {
@@ -43,11 +74,11 @@ function SupKitchenServersController($http, $interval) {
         });
     }
 
-    ctrl.tail = 'Waiting for selection....';
-
     var updatetail = function() {
-        if (ctrl.checked)
+        if (ctrl.checked) {
             ctrl.taillog(ctrl.processindex);
+            ctrl.updateServerStatus();
+        }
     };
 
     var stoptime = $interval(updatetail, 10000);
@@ -58,8 +89,6 @@ angular.module('supkitchenApp').component('supkitchenServers', {
   templateUrl: 'static/servers.html',
   controller: SupKitchenServersController,
   bindings: {
-    servers: '<',
-    onUpdate: '&'
   }
 });
 })(window.angular);

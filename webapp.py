@@ -1,6 +1,5 @@
 import logging
-
-from flask import Flask, render_template, json, jsonify
+from flask import Flask, render_template, jsonify, request
 from supkitchen.config import *
 from supkitchen.xmlrpcutils import SupervisorRPC
 
@@ -45,8 +44,10 @@ def getprocessinfo(servername, processname):
 
 @app.route('/api/tailprocess/<string:servername>/<string:processname>')
 def taillog(servername, processname):
+    taillength = request.args.get('length', '3072')
+
     srpc = SupervisorRPC(**dict(config.items(servername)))
-    tail = srpc.tailLog(processname, length=2048)
+    tail = srpc.tailLog(processname, length=taillength)
 
     return jsonify(tail)
 
