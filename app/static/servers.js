@@ -64,6 +64,14 @@ function SupKitchenServersController($http, $interval) {
             return style;
     };
 
+    ctrl.serverclass = function(index) {
+        if (index == ctrl.servers.selectedindex)
+            return 'btn btn-success btn-sm navbar-btn';
+        else
+            return 'btn btn-primary btn-sm navbar-btn';
+    }
+
+
     ctrl.taillog = function(index) {
         ctrl.processindex = index;
         ctrl.curprocess = ctrl.servers.processlist[ctrl.processindex];

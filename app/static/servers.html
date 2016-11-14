@@ -6,7 +6,7 @@
         </div>
         <div class="navbar-nav">
             <button ng-repeat="server in $ctrl.servers.list" ng-click="$ctrl.updateServer($index)"
-                    type="button" class="btn btn-primary btn-sm navbar-btn">{{server}}
+                    type="button"  ng-class="$ctrl.serverclass($index)">{{server}}
             </button>
         </div>
         <div class="navbar-nav navbar-right">
