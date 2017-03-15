@@ -37,9 +37,9 @@
       paper-button {
         font-family: 'Roboto', 'Noto', sans-serif;
         font-weight: normal;
-        font-size: 14px;
+        font-size: 12px;
         -webkit-font-smoothing: antialiased;
-        margin: 5px;
+        margin: 3px;
       }
 
        paper-button.STOPPED {
@@ -75,7 +75,8 @@
       url="{{apiurl}}servers"
       handle-as="json"
       on-response="handleResponse"
-      debounce-duration="300">
+      debounce-duration="300"
+      headers='{"cache-control": "no-cache, no-store, must-revalidate", "pragma": "no-cache", "expires": 0}'>
       </iron-ajax>
 
    <iron-ajax
@@ -83,7 +84,8 @@
       id="processLister"
       handle-as="json"
       on-response="handleProcessResponse"
-      debounce-duration="300">
+      debounce-duration="300"
+      headers='{"cache-control": "no-cache, no-store, must-revalidate", "pragma": "no-cache", "expires": 0}'>
       </iron-ajax>
 
    <iron-ajax
@@ -91,8 +93,10 @@
       id="processtail"
       handle-as="json"
       on-response="handleTailResponse"
-      debounce-duration="300">
+      debounce-duration="300"
+      headers='{"cache-control": "no-cache, no-store, must-revalidate", "pragma": "no-cache", "expires": 0}'>
       </iron-ajax>
+
 <section class="layout horizontal center">
     <template is="dom-if" if="{{servers}}">
       <paper-dropdown-menu label="Servers" on-iron-select="serverSelected">
@@ -160,13 +164,12 @@
    },
 
    updateProcess: function(e) {
-      this.selectedProcess = e.target.id;
+         this.selectedProcess = e.target.id;
       this.$.processtail.url = this.apiurl + "tailprocess/" + this.selectedServer + '/' + this.selectedProcess;
    },
 
 
    handleResponse: function(data) {
-      console.log(data.detail.response);
       this.servers = data.detail.response;
       if ( !this.selected ) {
         this.selected=0;
@@ -184,7 +187,6 @@
    },
 
   refreshTail: function() {
-    console.log(this.autorefresh);
     if ( this.processes && this.autorefresh ) {
       this.$.processtail.generateRequest();
     };

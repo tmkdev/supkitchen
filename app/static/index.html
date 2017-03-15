@@ -22668,9 +22668,9 @@ this.currentTarget=a,this.defaultPrevented=!1,this.eventPhase=Event.AT_TARGET,th
       paper-button {
         font-family: 'Roboto', 'Noto', sans-serif;
         font-weight: normal;
-        font-size: 14px;
+        font-size: 12px;
         -webkit-font-smoothing: antialiased;
-        margin: 5px;
+        margin: 3px;
       }
 
        paper-button.STOPPED {
@@ -22700,14 +22700,15 @@ this.currentTarget=a,this.defaultPrevented=!1,this.eventPhase=Event.AT_TARGET,th
  <paper-toolbar>
   <span class="title">SupKitchen</span>
 </paper-toolbar>
-   <iron-ajax auto="" id="serverLister" url="{{apiurl}}servers" handle-as="json" on-response="handleResponse" debounce-duration="300">
+   <iron-ajax auto="" id="serverLister" url="{{apiurl}}servers" handle-as="json" on-response="handleResponse" debounce-duration="300" headers="{&quot;cache-control&quot;: &quot;no-cache, no-store, must-revalidate&quot;, &quot;pragma&quot;: &quot;no-cache&quot;, &quot;expires&quot;: 0}">
       </iron-ajax>
 
-   <iron-ajax auto="" id="processLister" handle-as="json" on-response="handleProcessResponse" debounce-duration="300">
+   <iron-ajax auto="" id="processLister" handle-as="json" on-response="handleProcessResponse" debounce-duration="300" headers="{&quot;cache-control&quot;: &quot;no-cache, no-store, must-revalidate&quot;, &quot;pragma&quot;: &quot;no-cache&quot;, &quot;expires&quot;: 0}">
       </iron-ajax>
 
-   <iron-ajax auto="" id="processtail" handle-as="json" on-response="handleTailResponse" debounce-duration="300">
+   <iron-ajax auto="" id="processtail" handle-as="json" on-response="handleTailResponse" debounce-duration="300" headers="{&quot;cache-control&quot;: &quot;no-cache, no-store, must-revalidate&quot;, &quot;pragma&quot;: &quot;no-cache&quot;, &quot;expires&quot;: 0}">
       </iron-ajax>
+
 <section class="layout horizontal center">
     <template is="dom-if" if="{{servers}}">
       <paper-dropdown-menu label="Servers" on-iron-select="serverSelected">
@@ -22775,13 +22776,12 @@ this.currentTarget=a,this.defaultPrevented=!1,this.eventPhase=Event.AT_TARGET,th
    },
 
    updateProcess: function(e) {
-      this.selectedProcess = e.target.id;
+         this.selectedProcess = e.target.id;
       this.$.processtail.url = this.apiurl + "tailprocess/" + this.selectedServer + '/' + this.selectedProcess;
    },
 
 
    handleResponse: function(data) {
-      console.log(data.detail.response);
       this.servers = data.detail.response;
       if ( !this.selected ) {
         this.selected=0;
@@ -22799,7 +22799,6 @@ this.currentTarget=a,this.defaultPrevented=!1,this.eventPhase=Event.AT_TARGET,th
    },
 
   refreshTail: function() {
-    console.log(this.autorefresh);
     if ( this.processes && this.autorefresh ) {
       this.$.processtail.generateRequest();
     };
