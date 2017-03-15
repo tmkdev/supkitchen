@@ -1,5 +1,5 @@
 import logging
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 from supkitchen.config import *
 from supkitchen.xmlrpcutils import SupervisorRPC
 
@@ -8,8 +8,8 @@ app = Flask(__name__)
 config = readconfig()
 
 @app.route('/')
-def hello_world():
-    return render_template('main.html')
+def index_static():
+    return send_from_directory('static', 'index.html')
 
 @app.route('/api/servers')
 def getservers():
@@ -17,7 +17,7 @@ def getservers():
 
     return servers
 
-@app.route('/api/serverstatus/<servername>')
+@app.route('/api/serverstatus/<string:servername>')
 def getserverstatus(servername):
     serverstatus = {}
     try:
@@ -30,10 +30,15 @@ def getserverstatus(servername):
 
 @app.route('/api/serverprocesses/<string:servername>')
 def getallserverprocesses(servername):
-    srpc = SupervisorRPC(**dict(config.items(servername)))
-    allprocesses = srpc.getAllProcesses()
+    try:
+        srpc = SupervisorRPC(**dict(config.items(servername)))
+        allprocesses = srpc.getAllProcesses()
 
-    return jsonify(allprocesses)
+        return jsonify(allprocesses)
+
+    except:
+        return jsonify([{'name': 'Unknown', 'requestetedserver': 'servername', 'error': 'Unknown Server'}])
+
 
 @app.route('/api/processinfo/<string:servername>/<string:processname>')
 def getprocessinfo(servername, processname):
@@ -53,5 +58,5 @@ def taillog(servername, processname):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='127.0.0.1', port=9000)
 

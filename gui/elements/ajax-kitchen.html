@@ -1,0 +1,197 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<dom-module id="ajax-kitchen">
+    <style>
+      pre {
+        white-space: pre-wrap;
+        background-color: var(--paper-grey-200);
+        font-family: monospace;
+        padding: 3px;
+        border: 1px solid;
+        overflow: auto;
+        max-height: 650px;
+        border-radius: 4px; 
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
+
+      section {
+        margin: 10px;
+        font-family: Roboto;
+      }
+
+      paper-slider,paper-dropdown-menu,paper-toggle-button {
+        margin: 10px;
+      }
+
+      paper-button {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        font-weight: normal;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+        margin: 5px;
+      }
+
+       paper-button.STOPPED {
+          background-color: var(--paper-red-500);
+          color: white;
+       }
+       
+       paper-button.RUNNING {
+          background-color: var(--paper-green-500);
+          color: white;
+       }
+
+       paper-button.STARTING {
+          background-color:  var(--paper-cyan-500);
+          color: black;
+       }
+
+       paper-button.EXITED {
+          background-color: var(--paper-yellow-500);
+          color: black;
+       }
+
+    </style>
+
+ <template>
+
+ <paper-toolbar>
+  <span class="title">SupKitchen</span>
+</paper-toolbar>
+   <iron-ajax
+      auto
+      id="serverLister"
+      url="{{apiurl}}servers"
+      handle-as="json"
+      on-response="handleResponse"
+      debounce-duration="300">
+      </iron-ajax>
+
+   <iron-ajax
+      auto
+      id="processLister"
+      handle-as="json"
+      on-response="handleProcessResponse"
+      debounce-duration="300">
+      </iron-ajax>
+
+   <iron-ajax
+      auto
+      id="processtail"
+      handle-as="json"
+      on-response="handleTailResponse"
+      debounce-duration="300">
+      </iron-ajax>
+<section class="layout horizontal center">
+    <template is="dom-if" if="{{servers}}">
+      <paper-dropdown-menu label="Servers" on-iron-select="serverSelected">
+        <paper-listbox class="dropdown-content" selected="{{selected}}">
+          <template is="dom-repeat" items="[[servers]]">
+            <paper-item>[[item]]</paper-item>
+          </template>
+         </paper-listbox>
+      </paper-dropdown-menu>
+    </template>
+    <paper-input label="Selected Process" value$={{selectedProcess}}></paper-input>
+
+    <template is="dom-if" if="{{processes}}">
+      <paper-toggle-button id="refreshtoggle" checked={{autorefresh}}>Auto Refresh log tail</paper-toggle-button>
+      <paper-slider id="delay" value="{{refreshdelay}}" min="1" max="60" editable></paper-slider>
+      <div class="label" self-center>Refresh Delay</div>
+    </template>
+</section>
+
+
+    <template is="dom-if" if="{{processes}}">
+      <div style="font-size: 0;">
+        <template is="dom-repeat" items="[[processes]]">
+          <div style="display:inline;">
+            <paper-button id$="{{item.name}}" raised class$={{item.statename}} on-tap="updateProcess">{{item.name}}</paper-button>
+            <paper-tooltip>{{item.statename}}: {{item.description}} EXIT:{{item.exitstatus}}</paper-tooltip>
+          </div>
+        </template>
+      </div>
+      <pre>{{logpart}}</pre>
+    </template>
+
+ </template>
+ <script>
+  Polymer ({
+   is: "ajax-kitchen",
+   properties: {
+    apiurl: {
+      type: String,
+      value: "http://localhost/supkitchen/api/",
+    }
+   },
+
+   ready: function() {
+    this.servers = null; 
+    this.processes = null;
+    this.selected = 0;
+    this.selectedServer = null; 
+    this.selectedProcess = null; 
+    this.autorefresh=true;
+    this.refreshdelay=10;
+    this.logpart = 'Please select a server and process.';
+    this.refreshTail();
+    this.$.serverLister.generateRequest();
+   },
+
+   serverSelected: function(e) {
+    this.selectedServer = e.target.selectedItem.innerText.trim();
+    this.$.processLister.url = this.apiurl + "serverprocesses/" + this.selectedServer;
+   },
+
+   processSelected: function(e) {
+    this.selectedProcess = e.target.selectedItem.innerText.trim();
+    this.$.processtail.url = this.apiurl + "tailprocess/" + this.selectedServer + '/' + this.selectedProcess;
+   },
+
+   updateProcess: function(e) {
+      this.selectedProcess = e.target.id;
+      this.$.processtail.url = this.apiurl + "tailprocess/" + this.selectedServer + '/' + this.selectedProcess;
+   },
+
+
+   handleResponse: function(data) {
+      console.log(data.detail.response);
+      this.servers = data.detail.response;
+      if ( !this.selected ) {
+        this.selected=0;
+      };
+
+   },
+
+  handleProcessResponse: function(data) {
+      this.processes = data.detail.response;
+   },
+
+  handleTailResponse: function(data) {
+      console.log(data.detail.response);
+      this.logpart = data.detail.response[0];
+   },
+
+  refreshTail: function() {
+    console.log(this.autorefresh);
+    if ( this.processes && this.autorefresh ) {
+      this.$.processtail.generateRequest();
+    };
+    this.async(this.refreshTail, this.refreshdelay * 1000 );
+  },
+
+
+  });
+   </script>
+</dom-module>﻿

@@ -1,0 +1,22 @@
+{
+  "name": "supkitchen",
+  "description": "Supervisor Kitchen",
+  "main": "index.html",
+  "authors": [
+    "terrance.2.kolody@sprint.com"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.8.1",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.10"
+  }
+}
