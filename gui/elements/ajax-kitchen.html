@@ -27,7 +27,7 @@
 
       section {
         margin: 10px;
-        font-family: Roboto;
+        font-family: 'Roboto', 'Noto', sans-serif;
       }
 
       paper-slider,paper-dropdown-menu,paper-toggle-button {
@@ -189,6 +189,7 @@
   refreshTail: function() {
     if ( this.processes && this.autorefresh ) {
       this.$.processtail.generateRequest();
+      this.$.processLister.generateRequest();
     };
     this.async(this.refreshTail, this.refreshdelay * 1000 );
   },
